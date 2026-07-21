@@ -17,3 +17,6 @@ def profile(request):
 
 def change_password(request):
     return render(request, "change_password.html")
+
+def products(request):
+    return render(request, "products.html")
