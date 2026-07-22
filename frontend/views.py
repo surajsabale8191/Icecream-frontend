@@ -20,3 +20,6 @@ def change_password(request):
 
 def products(request):
     return render(request, "products.html")
+
+def cart(request):
+    return render(request, "cart.html")

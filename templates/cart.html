@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Cart
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">
+        🛒 My Cart
+    </h2>
+
+    <div id="cartContainer">
+
+    </div>
+
+</div>
+
+<script src="{% static 'js/cart.js' %}"></script>
+
+{% endblock %}

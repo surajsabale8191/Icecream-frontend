@@ -54,7 +54,8 @@ const response = await fetch(url);
                     </h4>
 
                     <button
-                        class="btn btn-warning w-100">
+                        class="btn btn-warning w-100"
+                        onclick="addToCart(${product.id})">
 
                         Add To Cart
 
@@ -117,3 +118,66 @@ categoryFilter.addEventListener("change", function () {
     );
 
 });
+
+async function addToCart(productId) {
+
+    const token = localStorage.getItem("access");
+
+    if (!token) {
+
+        alert("Please login first.");
+
+        window.location.href = "/login/";
+
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API}/cart/`,
+            {
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": `Bearer ${token}`
+
+                },
+
+                body: JSON.stringify({
+
+                    product: productId
+
+                })
+
+            }
+        );
+
+        const result = await response.json();
+
+        if (response.ok) {
+
+            alert(result.message);
+
+        }
+
+        else {
+
+            alert(result.message || "Something went wrong.");
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        alert("Cannot connect to server.");
+
+    }
+
+}
