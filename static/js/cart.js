@@ -6,33 +6,39 @@ async function loadCart() {
 
     const token = localStorage.getItem("access");
 
-    const response = await fetch(
-
-        `${API}/cart/view/`,
-
-        {
-
-            headers: {
-
-                Authorization: `Bearer ${token}`
-
-            }
-
-        }
-
-    );
+    const response = await apiRequest("/cart/view/");
 
     const result = await response.json();
 
     const container = document.getElementById("cartContainer");
 
     container.innerHTML = "";
+    if (result.data.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="alert alert-info text-center">
+
+                <h4>Your cart is empty 🛒</h4>
+
+                <p>Add some delicious ice creams!</p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    let grandTotal = 0;
 
     result.data.forEach(item => {
 
+        grandTotal += parseFloat(item.total_price);
+
         container.innerHTML += `
 
-        <div class="card mb-3">
+        <div class="card mb-3 shadow">
 
             <div class="row g-0">
 
@@ -40,7 +46,8 @@ async function loadCart() {
 
                     <img
                         src="http://127.0.0.1:8001${item.product_image}"
-                        class="img-fluid">
+                        class="img-fluid rounded-start"
+                        style="height:200px; object-fit:cover; width:100%;">
 
                 </div>
 
@@ -48,29 +55,43 @@ async function loadCart() {
 
                     <div class="card-body">
 
-                        <h4>
+                        <h4>${item.product_name}</h4>
 
-                            ${item.product_name}
-
-                        </h4>
-
-                        <h5>
-
+                        <h5 class="text-success">
                             ₹${item.product_price}
-
                         </h5>
+
+                        <div class="d-flex align-items-center gap-2 my-3">
+
+                            <button
+                                class="btn btn-danger"
+                                onclick="decreaseQuantity(${item.id})">
+                                -
+                            </button>
+
+                            <span class="fs-5">
+                                ${item.quantity}
+                            </span>
+
+                            <button
+                                class="btn btn-success"
+                                onclick="increaseQuantity(${item.id})">
+                                +
+                            </button>
+
+                        </div>
 
                         <h5>
-
-                            Quantity : ${item.quantity}
-
+                            Total : ₹${item.total_price}
                         </h5>
 
-                        <h4>
+                        <button
+                            class="btn btn-outline-danger mt-2"
+                            onclick="removeItem(${item.id})">
 
-                            Total : ₹${item.total_price}
+                            Remove
 
-                        </h4>
+                        </button>
 
                     </div>
 
@@ -83,5 +104,71 @@ async function loadCart() {
         `;
 
     });
+
+    // Cart Summary
+    container.innerHTML += `
+
+    <div class="card shadow mt-4">
+
+        <div class="card-body text-end">
+
+            <h3 class="text-success">
+                Grand Total : ₹${grandTotal.toFixed(2)}
+            </h3>
+
+        </div>
+
+    </div>
+
+    `;
+}
+
+async function increaseQuantity(cartId) {
+
+    const token = localStorage.getItem("access");
+
+    await apiRequest(`/cart/increase/${cartId}/`, {
+        method: "PUT"
+    });
+
+    loadCart();
+
+}
+
+async function decreaseQuantity(cartId) {
+
+    const token = localStorage.getItem("access");
+
+    await apiRequest(`/cart/decrease/${cartId}/`, {
+        method: "PUT"
+    });
+
+    loadCart();
+
+}
+
+
+async function removeItem(cartId) {
+
+    const token = localStorage.getItem("access");
+
+    const confirmDelete = confirm(
+        "Remove this item from cart?"
+    );
+
+    if (!confirmDelete)
+        return;
+
+    await fetch(
+        `${API}/cart/remove/${cartId}/`,
+        {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    loadCart();
 
 }

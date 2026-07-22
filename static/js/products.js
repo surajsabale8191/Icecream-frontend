@@ -134,27 +134,19 @@ async function addToCart(productId) {
 
     try {
 
-        const response = await fetch(
-            `${API}/cart/`,
-            {
-                method: "POST",
+        const response = await apiRequest("/cart/", {
 
-                headers: {
+            method: "POST",
 
-                    "Content-Type": "application/json",
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                    "Authorization": `Bearer ${token}`
+            body: JSON.stringify({
+                product: productId
+            })
 
-                },
-
-                body: JSON.stringify({
-
-                    product: productId
-
-                })
-
-            }
-        );
+        });
 
         const result = await response.json();
 
