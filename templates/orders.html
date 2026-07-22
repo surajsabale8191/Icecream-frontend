@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">
+        📦 My Orders
+    </h2>
+
+    <div id="ordersContainer">
+
+        Loading...
+
+    </div>
+
+</div>
+
+<script src="{% static 'js/orders.js' %}"></script>
+
+{% endblock %}

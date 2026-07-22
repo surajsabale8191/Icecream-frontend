@@ -8,7 +8,15 @@ async function loadCart() {
 
     const response = await apiRequest("/cart/view/");
 
+    if (!response) {
+        return;
+    }
+
     const result = await response.json();
+    if (!result.data) {
+    console.log(result);
+    return;
+}
 
     const container = document.getElementById("cartContainer");
 
@@ -116,6 +124,14 @@ async function loadCart() {
                 Grand Total : ₹${grandTotal.toFixed(2)}
             </h3>
 
+            <button
+                class="btn btn-warning btn-lg mt-3"
+                onclick="placeOrder()">
+
+                🛒 Place Order
+
+            </button>
+
         </div>
 
     </div>
@@ -171,4 +187,45 @@ async function removeItem(cartId) {
 
     loadCart();
 
+}
+
+async function placeOrder() {
+
+    const confirmOrder = confirm(
+        "Are you sure you want to place this order?"
+    );
+
+    if (!confirmOrder) {
+        return;
+    }
+
+    try {
+
+        const response = await apiRequest("/orders/checkout/", {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+
+            alert(result.message);
+
+            loadCart();
+
+            window.location.href = "/orders/";
+
+        } else {
+
+            alert(result.message);
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Something went wrong.");
+
+    }
 }

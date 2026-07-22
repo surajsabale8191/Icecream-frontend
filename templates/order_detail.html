@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Order Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">
+        📦 Order Details
+    </h2>
+
+    <div id="orderDetailContainer">
+
+        Loading...
+
+    </div>
+
+</div>
+
+<script>
+    const ORDER_ID = "{{ order_id }}";
+</script>
+
+<script src="{% static 'js/order_detail.js' %}"></script>
+
+{% endblock %}
